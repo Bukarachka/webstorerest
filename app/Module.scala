@@ -1,7 +1,13 @@
 import com.google.inject.AbstractModule
 import java.time.Clock
 
-import services.{ApplicationTimer, AtomicCounter, Counter}
+import com.google.gson.Gson
+import data.repository.UserRepository
+import data.repository.impl.SimpleUserRepository
+import data.store.MongoStore.MUserStore
+import data.store.UserStore
+import services.auth.BearerTokenGenerator
+import services.{ApiJsonMessage, ApplicationTimer, AtomicCounter, Counter}
 
 /**
  * This class is a Guice module that tells Guice how to bind several
@@ -16,6 +22,19 @@ import services.{ApplicationTimer, AtomicCounter, Counter}
 class Module extends AbstractModule {
 
   override def configure() = {
+
+    val gson = new Gson()
+    bind(classOf[Gson]).toInstance(gson)
+
+    val message = new ApiJsonMessage
+    bind(classOf[ApiJsonMessage]).toInstance(message)
+
+    val tokenGenerator = new BearerTokenGenerator
+    bind(classOf[BearerTokenGenerator]).toInstance(tokenGenerator)
+
+    this.bindRepositories
+    this.bindStore
+
     // Use the system clock as the default implementation of Clock
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
     // Ask Guice to create an instance of ApplicationTimer when the
@@ -25,4 +44,11 @@ class Module extends AbstractModule {
     bind(classOf[Counter]).to(classOf[AtomicCounter])
   }
 
+  private def bindRepositories = {
+    bind(classOf[UserRepository]).to(classOf[SimpleUserRepository])
+  }
+
+  private def bindStore = {
+    bind(classOf[UserStore]).to(classOf[MUserStore])
+  }
 }

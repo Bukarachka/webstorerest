@@ -1,26 +1,23 @@
 package data.entity;
 
-import io.ebean.Model;
+import com.google.gson.annotations.SerializedName;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-@Entity
-public class User extends Model {
+@Entity("user")
+public class User {
     private static final long TOKEN_EXPIRES_TIME = 7 * 86400000;
 
     @Id
-    private long id;
+    @SerializedName("id")
+    private ObjectId id;
     private String username;
     private String password;
     private String phoneNumber;
     private String name;
-    @OneToMany(mappedBy = "seller")
-    private List<Post> posts;
     private String token;
     private Date tokenExpiresDate;
 
@@ -28,26 +25,16 @@ public class User extends Model {
 
     }
 
-    public User(String username, String password, String phoneNumber, String name, String token){
-        this(username, password, phoneNumber, name, new ArrayList<>(), token);
+    public User(String username, String password, String phoneNumber, String name, String token) {
+        this(new ObjectId().toHexString(), username, password, phoneNumber, name, token);
     }
 
-    public User(String username, String password, String phoneNumber, String name, List<Post> posts, String token) {
+    public User(String id, String username, String password, String phoneNumber, String name, String token) {
+        this.id = new ObjectId(id);
         this.username = username;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.name = name;
-        this.posts = posts;
-        updateToken(token);
-    }
-
-    public User(long id, String username, String password, String phoneNumber, String name, List<Post> posts, String token) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.name = name;
-        this.posts = posts;
         updateToken(token);
     }
 
@@ -56,8 +43,8 @@ public class User extends Model {
         this.tokenExpiresDate = new Date(System.currentTimeMillis() + TOKEN_EXPIRES_TIME);
     }
 
-    public long getId() {
-        return id;
+    public String getId() {
+        return id.toHexString();
     }
 
     public String getUsername() {
@@ -74,10 +61,6 @@ public class User extends Model {
 
     public String getName() {
         return name;
-    }
-
-    public List<Post> getPosts() {
-        return posts;
     }
 
     public String getToken() {
