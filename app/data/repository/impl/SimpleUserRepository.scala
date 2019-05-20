@@ -9,13 +9,14 @@ import services.auth.BearerTokenGenerator
 class SimpleUserRepository @Inject()(private val store: UserStore,
                                      private val tokenGenerator: BearerTokenGenerator)
   extends UserRepository{
-  
+
   override def login(username: String, password: String): User = {
     val user = store.find(username, password)
     if(user == null){
       throw new NoSuchElementException("There is no such user!")
     }else{
       user.updateToken(tokenGenerator.generateSHAToken(username))
+      store.update(user)
       user
     }
   }

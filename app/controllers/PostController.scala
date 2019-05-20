@@ -24,7 +24,7 @@ class PostController @Inject()(cc: ControllerComponents,
         InternalServerError(message.error(e.getLocalizedMessage))
     }
   }
-  
+
   def getAll = unAuthAction{
     try {
       Ok(model.getAll())
@@ -41,7 +41,7 @@ class PostController @Inject()(cc: ControllerComponents,
         ( json \ "title").asOpt[String].map { title =>
           ( json \ "description").asOpt[String].map { description =>
             ( json \ "price").asOpt[Double].map { price =>
-              (json \ "image").asOpt[String].map { image =>
+              ( json \ "image").asOpt[String].map { image =>
                 try {
                   Ok(model.update(new Post(id, title, description, price, image)))
                 }
