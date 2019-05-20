@@ -1,7 +1,6 @@
 package controllers
 
-import com.google.gson.Gson
-import data.repository.UserRepository
+import data.model.UserModel
 import javax.inject.Inject
 import play.api.mvc.{AbstractController, ControllerComponents}
 import services.ApiJsonMessage
@@ -9,9 +8,8 @@ import services.auth.UnAuthAction
 
 class AuthController @Inject()(cc: ControllerComponents,
                                unAuthAction: UnAuthAction,
-                               repo: UserRepository,
-                               message: ApiJsonMessage,
-                               gson: Gson)
+                               model: UserModel,
+                               message: ApiJsonMessage)
   extends AbstractController(cc){
 
   def signUp() = unAuthAction{ implicit request =>
@@ -21,7 +19,7 @@ class AuthController @Inject()(cc: ControllerComponents,
           (json \ "phoneNumber").asOpt[String].map { phoneNumber =>
             (json \ "name").asOpt[String].map { name =>
               try {
-                Ok(gson.toJson(repo.signUp(username, password, phoneNumber, name)))
+                Ok(model.signUp(username, password, phoneNumber, name))
               }
               catch {
                 case e: NoSuchElementException =>
@@ -51,7 +49,7 @@ class AuthController @Inject()(cc: ControllerComponents,
       (json \ "username").asOpt[String].map{username =>
         (json \ "password").asOpt[String].map{password =>
           try{
-            Ok(gson.toJson(repo.login(username, password)))
+            Ok(model.login(username, password))
           }
           catch{
             case e: NoSuchElementException =>
