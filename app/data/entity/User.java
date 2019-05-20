@@ -20,6 +20,7 @@ public class User {
     private String name;
     private String token;
     private Date tokenExpiresDate;
+    private boolean isAdmin;
 
     public User(){
 
@@ -36,6 +37,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.name = name;
         updateToken(token);
+        this.isAdmin = false;
     }
 
     public void updateToken(String token){
@@ -69,5 +71,9 @@ public class User {
 
     public Date getTokenExpiresDate() {
         return tokenExpiresDate;
+    }
+
+    public boolean isAdmin() {
+        return this.isAdmin;
     }
 }

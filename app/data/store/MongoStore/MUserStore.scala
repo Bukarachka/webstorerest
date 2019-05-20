@@ -6,7 +6,8 @@ import data.store.UserStore
 import javax.inject.Inject
 import org.bson.types.ObjectId
 
-class MUserStore @Inject()(private val storeProvider: StoreProvider) extends UserStore{
+class MUserStore @Inject()(private val storeProvider: StoreProvider)
+  extends UserStore{
   override def find(userId: String): User = {
     val objectId = new ObjectId(userId)
     this.storeProvider.get().get(classOf[User], objectId)
@@ -43,5 +44,15 @@ class MUserStore @Inject()(private val storeProvider: StoreProvider) extends Use
   override def save(user: User): User = {
     val entityId = new MorphiaDAO[User].save(this.storeProvider.get(), user).getId
     this.find(entityId.toString)
+  }
+
+  override def findByToken(token: String): User = {
+    val query = this.storeProvider.get().find(classOf[User])
+    query.and(
+      query.criteria(
+        "token"
+      ).equal(token)
+    )
+    query.get()
   }
 }

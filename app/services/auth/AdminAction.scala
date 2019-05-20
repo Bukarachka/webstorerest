@@ -11,7 +11,7 @@ import services.ApiJsonMessage
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class AuthAction @Inject()(message: ApiJsonMessage,
+class AdminAction @Inject()(message: ApiJsonMessage,
                            bodyParser: BodyParsers.Default,
                            store: UserStore)
                           (implicit ec: ExecutionContext)
@@ -37,8 +37,8 @@ class AuthAction @Inject()(message: ApiJsonMessage,
 
   private def validateToken(token: String): Unit = {
     val user = store.findByToken(token)
-    if(user == null || user.getTokenExpiresDate.after(new Date())){
-      throw new IllegalArgumentException("Invalid token")
+    if(user == null || user.getTokenExpiresDate.after(new Date()) || !user.isAdmin){
+      throw new IllegalArgumentException("Blocked")
     } else {
       user.updateToken(user.getToken)
     }
