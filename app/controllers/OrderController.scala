@@ -25,10 +25,10 @@ class OrderController @Inject()(cc: ControllerComponents,
         InternalServerError(message.error(e.getLocalizedMessage))
     }
   }
-  
+
   def findByUserId(userId: String) = authAction{ implicit request =>
     if(userId != request.userId){
-      Unauthorized()
+      Unauthorized("")
     }else {
       try {
         Ok(model.findByUserId(userId))

@@ -23,7 +23,7 @@ class AdminAction @Inject()(message: ApiJsonMessage,
   override def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] = {
     extractToken(request) map{token =>
       Try(validateToken(token)) match {
-        case Success(_) => block(UserRequest(request))
+        case Success(userId) => block(UserRequest(userId, request))
         case Failure(exception) => Future.successful(Results.Unauthorized(message.error(exception.getLocalizedMessage)))
       }
     } getOrElse{
@@ -35,12 +35,13 @@ class AdminAction @Inject()(message: ApiJsonMessage,
     request.headers.get(HeaderNames.AUTHORIZATION)
   }
 
-  private def validateToken(token: String): Unit = {
+  private def validateToken(token: String): String = {
     val user = store.findByToken(token)
     if(user == null || user.getTokenExpiresDate.after(new Date()) || !user.isAdmin){
       throw new IllegalArgumentException("Blocked")
     } else {
       user.updateToken(user.getToken)
+      user.getId
     }
   }
 }

@@ -2,12 +2,12 @@ import com.google.inject.AbstractModule
 import java.time.Clock
 
 import com.google.gson.Gson
-import data.model.UserModel
-import data.model.impl.SimpleUserModel
-import data.repository.UserRepository
-import data.repository.impl.SimpleUserRepository
-import data.store.MongoStore.MUserStore
-import data.store.UserStore
+import data.model.{OrderModel, PostModel, UserModel}
+import data.model.impl.{SimpleOrderModel, SimplePostModel, SimpleUserModel}
+import data.repository.{OrderRepository, PostRepository, UserRepository}
+import data.repository.impl.{SimpleOrderRepository, SimplePostRepository, SimpleUserRepository}
+import data.store.MongoStore.{MOrderStore, MPostStore, MUserStore}
+import data.store.{OrderStore, PostStore, UserStore}
 import services.auth.BearerTokenGenerator
 import services.{ApiJsonMessage, ApplicationTimer, AtomicCounter, Counter}
 
@@ -49,13 +49,19 @@ class Module extends AbstractModule {
 
   private def bindModel = {
     bind(classOf[UserModel]).to(classOf[SimpleUserModel])
+    bind(classOf[PostModel]).to(classOf[SimplePostModel])
+    bind(classOf[OrderModel]).to(classOf[SimpleOrderModel])
   }
 
   private def bindRepositories = {
     bind(classOf[UserRepository]).to(classOf[SimpleUserRepository])
+    bind(classOf[PostRepository]).to(classOf[SimplePostRepository])
+    bind(classOf[OrderRepository]).to(classOf[SimpleOrderRepository])
   }
 
   private def bindStore = {
     bind(classOf[UserStore]).to(classOf[MUserStore])
+    bind(classOf[PostStore]).to(classOf[MPostStore])
+    bind(classOf[OrderStore]).to(classOf[MOrderStore])
   }
 }

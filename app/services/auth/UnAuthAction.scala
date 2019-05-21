@@ -10,5 +10,5 @@ class UnAuthAction @Inject()(bodyParser: BodyParsers.Default)(implicit ec: Execu
   override def parser: BodyParser[AnyContent] = bodyParser
   override protected def executionContext: ExecutionContext = ec
 
-  override def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] = block(UserRequest(request))
+  override def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] = block(UserRequest("", request))
 }
