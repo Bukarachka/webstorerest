@@ -37,7 +37,7 @@ class AuthAction @Inject()(message: ApiJsonMessage,
 
   private def validateToken(token: String): String = {
     val user = store.findByToken(token)
-    if(user == null || user.getTokenExpiresDate.after(new Date())){
+    if(user == null || user.getTokenExpiresDate.before(new Date())){
       throw new IllegalArgumentException("Invalid token")
     } else {
       user.updateToken(user.getToken)

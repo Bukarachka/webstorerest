@@ -93,16 +93,12 @@ class OrderController @Inject()(cc: ControllerComponents,
       ( json \ "userId").asOpt[String].map { userId =>
         ( json \ "postId").asOpt[String].map { postId =>
           ( json \ "comment").asOpt[String].map { comment =>
-            ( json \ "date").asOpt[Long].map { date =>
-              try{
-                Ok(model.save(new Order(userId, postId, comment, new Date(date), false)))
-              }
-              catch {
-                case e: Exception =>
-                  InternalServerError(message.error(e.getLocalizedMessage))
-              }
-            }.getOrElse {
-              BadRequest(message.error("Expecting date"))
+            try{
+              Ok(model.save(new Order(userId, postId, comment, new Date(), false)))
+            }
+            catch {
+              case e: Exception =>
+                InternalServerError(message.error(e.getLocalizedMessage))
             }
           }.getOrElse {
             BadRequest(message.error("Expecting comment"))

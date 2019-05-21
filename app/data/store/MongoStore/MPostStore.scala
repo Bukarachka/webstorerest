@@ -6,6 +6,7 @@ import data.{MorphiaDAO, StoreProvider}
 import data.entity.Post
 import data.store.PostStore
 import javax.inject.Inject
+import org.bson.types
 import org.bson.types.ObjectId
 
 class MPostStore @Inject()(private val storeProvider: StoreProvider)
@@ -35,7 +36,7 @@ class MPostStore @Inject()(private val storeProvider: StoreProvider)
     query.and(
       query.criteria(
         "id"
-      ).equal(postId)
+      ).equal(new types.ObjectId(postId))
     )
     this.storeProvider.get().delete(query)
     true
