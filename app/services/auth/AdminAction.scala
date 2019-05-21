@@ -37,7 +37,7 @@ class AdminAction @Inject()(message: ApiJsonMessage,
 
   private def validateToken(token: String): String = {
     val user = store.findByToken(token)
-    if(user == null || user.getTokenExpiresDate.after(new Date()) || !user.isAdmin){
+    if(user == null || user.getTokenExpiresDate.before(new Date()) || !user.isAdmin){
       throw new IllegalArgumentException("Blocked")
     } else {
       user.updateToken(user.getToken)
